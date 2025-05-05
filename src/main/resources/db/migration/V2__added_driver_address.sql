@@ -1,0 +1,1 @@
+ALTER TABLE Driver ADD Address VARCHAR(255);
