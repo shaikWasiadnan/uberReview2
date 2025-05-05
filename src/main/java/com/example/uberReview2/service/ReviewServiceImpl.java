@@ -6,13 +6,13 @@ import com.example.uberReview2.repository.ReviewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 
 import java.util.List;
 import java.util.Optional;
 
-
-
+@Service
 public class ReviewServiceImpl implements ReviewService{
     private final Logger logger=LoggerFactory.getLogger(ReviewServiceImpl.class);
     public ReviewRepository reviewRepository;
