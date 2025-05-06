@@ -10,5 +10,5 @@ import lombok.Setter;
 @Setter
 public class PassengerReview extends Review{
     private String passengerReviewContent;
-    private double rating;
+    private Double rating;
 }
