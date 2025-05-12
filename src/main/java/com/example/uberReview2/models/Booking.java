@@ -14,8 +14,11 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Booking extends Base{
-    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
-    private Review review;
+
+//    @OneToOne(cascade = {CascadeType.ALL})
+//
+//    private Review review;
+
 
     @Enumerated(value = EnumType.STRING)
     private BookingStatus status;
@@ -28,6 +31,8 @@ public class Booking extends Base{
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date totalTime;
+
+
 
     @ManyToOne
     private Driver driver;

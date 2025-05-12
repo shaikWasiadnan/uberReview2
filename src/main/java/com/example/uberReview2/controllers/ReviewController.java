@@ -1,5 +1,8 @@
 package com.example.uberReview2.controllers;
 
+import com.example.uberReview2.adapters.ConvertReviewDtoToReviewAdapter;
+import com.example.uberReview2.dtos.CreateReviewDto;
+import com.example.uberReview2.dtos.ReviewDto;
 import com.example.uberReview2.models.Review;
 import com.example.uberReview2.service.ReviewService;
 import org.springframework.http.HttpStatus;
@@ -12,15 +15,22 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/reviews")
 public class ReviewController {
-    public ReviewService reviewService;
+    private ReviewService reviewService;
+    private ConvertReviewDtoToReviewAdapter convertReviewDtoToReviewAdapter;
 
-    public ReviewController(ReviewService reviewService){
+
+    public ReviewController(ReviewService reviewService,ConvertReviewDtoToReviewAdapter convertReviewDtoToReviewAdapter){
         this.reviewService=reviewService;
+        this.convertReviewDtoToReviewAdapter=convertReviewDtoToReviewAdapter;
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getReviewById(@PathVariable Long id){
         try{
             Optional<Review> review=reviewService.findReviewById(id);
+            if(review.isEmpty()){
+                return new ResponseEntity<>("Review with id is not present: "+id,HttpStatus.NOT_FOUND);
+
+            }
             return new ResponseEntity<>(review,HttpStatus.OK);
         }
         catch (Exception e){
@@ -28,9 +38,12 @@ public class ReviewController {
         }
     }
     @GetMapping
-    public ResponseEntity<List<Review>> getAllReviews(){
+    public ResponseEntity<Object> getAllReviews(){
         try{
             List<Review> reviews= reviewService.findAllReviews();
+            if(reviews.isEmpty()){
+                return new ResponseEntity<>("You don't have reviews yet",HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<>(reviews,HttpStatus.OK);
         }
         catch (Exception e){
@@ -38,8 +51,20 @@ public class ReviewController {
         }
     }
     @PostMapping()
-    public ResponseEntity<Review> publishReview(@RequestBody Review review){
-        Review addedReview=reviewService.publishReview(review);
+    public ResponseEntity<?> publishReview(@RequestBody CreateReviewDto review){
+        Review incomingReview=this.convertReviewDtoToReviewAdapter.convertToReview(review);
+        if(incomingReview ==null){
+            return new ResponseEntity<>("review is null",HttpStatus.BAD_REQUEST);
+        }
+        Review addedReview=this.reviewService.publishReview(incomingReview);
+//        ReviewDto response=ReviewDto.builder()
+//                .id(addedReview.getId())
+//                .content(addedReview.getContent())
+//                .rating(addedReview.getRating())
+//                .created_at(addedReview.getCreatedAt())
+//                .updated_at(addedReview.getUpdatedAt())
+//                .booking_id(addedReview.getBooking().getId())
+//                .build();
         return new ResponseEntity<>(addedReview,HttpStatus.CREATED);
     }
     @DeleteMapping("/{id}")

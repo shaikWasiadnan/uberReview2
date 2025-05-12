@@ -20,7 +20,7 @@ public class Driver extends Base{
     private String name;
 
     @Column(nullable = false,unique = true)
-    private String license_No;
+    private String license_number;
 
     @OneToMany(mappedBy = "driver")
     private List<Booking> bookings=new ArrayList<>();
